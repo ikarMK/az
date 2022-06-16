@@ -10,6 +10,7 @@ from .serializers import BookSerializer,AuthorSerializer,PublisherSerializer
 from django.core.cache import cache
 from redis import Redis
 from cacheops import cached, cached_view
+from rest_framework import status
 def counter(func): 
     def wrapper(self, request,*args, **kwargs):
         ip = request.META.get('REMOTE_ADDR', '') or request.META.get('HTTP_X_FORWARDED_FOR', '') 
@@ -17,7 +18,7 @@ def counter(func):
         block = 'block:'+ip
         try:
             if(int(cache.get(block))==1):
-                return Response({"Dostup": "block"})
+                return Response({"Dostup": "block"}, status=status.HTTP_404_NOT_FOUND)
         except:
             try:
                 count = cache.incr(counter_ip)
